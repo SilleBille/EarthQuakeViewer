@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Earthquake Viewer</string>
+    <string name="BASE_URL">http://api.geonames.org</string>
+    <string name="network_unavailable">Network is unavailable</string>
+</resources>
