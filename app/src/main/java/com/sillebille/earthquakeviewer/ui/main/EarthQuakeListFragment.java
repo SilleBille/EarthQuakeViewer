@@ -140,7 +140,7 @@ public class EarthQuakeListFragment extends Fragment {
                 }
             }
         });
-        
+
         // Add the generated jsonObjectReqeust to the Volley queue
         queue.add(jsonObjectRequest);
     }

@@ -6,25 +6,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
 import com.sillebille.earthquakeviewer.R;
-import com.sillebille.earthquakeviewer.network.FetchResultQueue;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class EarthQuakeListAdapter extends RecyclerView.Adapter<EarthQuakeListAdapter.CustomRecyclerView> {
 
     private List<EarthquakesModel.EarthQuake> itemList;
-
-    private RequestQueue mRequestQueue;
+    private Context mContext;
 
     public EarthQuakeListAdapter(Context context, List<EarthquakesModel.EarthQuake> itemList) {
         this.itemList = itemList;
-        mRequestQueue = FetchResultQueue.getInstance(context).getRequestQueue();
+        this.mContext = context;
     }
 
     @NonNull
@@ -42,7 +39,9 @@ public class EarthQuakeListAdapter extends RecyclerView.Adapter<EarthQuakeListAd
         holder.txtMagnitue.setText(String.valueOf(myData.magnitude));
         holder.txtDateTime.setText(myData.dateTime);
 
-
+        if (myData.magnitude >= 8) {
+            holder.layoutItem.setBackgroundColor(mContext.getColor(R.color.warning));
+        }
     }
 
     @Override
@@ -54,12 +53,14 @@ public class EarthQuakeListAdapter extends RecyclerView.Adapter<EarthQuakeListAd
         TextView txtEqid;
         TextView txtMagnitue;
         TextView txtDateTime;
+        CardView layoutItem;
 
         CustomRecyclerView(View itemView) {
             super(itemView);
             txtEqid = itemView.findViewById(R.id.txt_eqid);
             txtMagnitue = itemView.findViewById(R.id.txt_magnitude);
             txtDateTime = itemView.findViewById(R.id.txt_dateTime);
+            layoutItem = itemView.findViewById(R.id.layout_item);
         }
     }
 
