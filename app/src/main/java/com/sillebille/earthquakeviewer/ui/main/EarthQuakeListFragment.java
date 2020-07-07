@@ -30,12 +30,13 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class EarthQuakeListFragment extends Fragment {
+public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAdapter.OnEarthQuakeClickListener {
 
     final String TAG_NAME = EarthQuakeListFragment.class.getName();
     // Our API end point to get Earth Quake list in JSON format
@@ -51,7 +52,6 @@ public class EarthQuakeListFragment extends Fragment {
     final String USER = "mkoppelman";
 
     // Define the member variable to be shared in multiple methods
-    private RecyclerView mRecyclerView;
     private ArrayList<EarthquakesModel.EarthQuake> mEarthQuakeDataList = new ArrayList<>();
     private EarthQuakeListAdapter mAdapter;
     private EarthquakesModel mViewModel;
@@ -66,14 +66,15 @@ public class EarthQuakeListFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.main_fragment, container, false);
 
-        mRecyclerView = rootView.findViewById(R.id.earthQuakeRecyclerView);
 
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        RecyclerView recyclerView = rootView.findViewById(R.id.earthQuakeRecyclerView);
 
-        mAdapter = new EarthQuakeListAdapter(getActivity(), mEarthQuakeDataList);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mAdapter = new EarthQuakeListAdapter(getActivity(), mEarthQuakeDataList, this);
+        recyclerView.setAdapter(mAdapter);
 
         return rootView;
     }
@@ -83,7 +84,6 @@ public class EarthQuakeListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(EarthquakesModel.class);
 
-        Log.d(TAG_NAME, "Debug: " + mViewModel.toString());
         Uri earthQuakeListUri = Uri.parse(getString(R.string.BASE_URL))
                 .buildUpon()
                 .appendPath(END_POINT)
@@ -99,8 +99,10 @@ public class EarthQuakeListFragment extends Fragment {
         if (mViewModel.earthQuakes == null || mViewModel.earthQuakes.isEmpty()) {
             getEarthQuakeList(earthQuakeListUrl);
         } else {
-            // If orientation changes, re-add the data from view model
-            mEarthQuakeDataList.addAll(mViewModel.earthQuakes);
+            // If orientation changes, re-add the data from view model ONLY IF the list is empty
+            if(mEarthQuakeDataList.isEmpty()) {
+                mEarthQuakeDataList.addAll(mViewModel.earthQuakes);
+            }
         }
     }
 
@@ -143,5 +145,28 @@ public class EarthQuakeListFragment extends Fragment {
 
         // Add the generated jsonObjectReqeust to the Volley queue
         queue.add(jsonObjectRequest);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Log.d(TAG_NAME, "Postion: " + position);
+        // Since we use the mEarthQuakeDataList to fill the adapter, we can reuse it to get the
+        // selected item
+        EarthquakesModel.EarthQuake selectedItem = mEarthQuakeDataList.get(position);
+
+        // Create the MapsFragment and parcel the selected item in a bundle
+        Fragment mapsFragment = new MapsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("selected_item", selectedItem);
+        mapsFragment.setArguments(bundle);
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+
+        // Replace whatever is in the container view with the Map fragment,
+        // and add the transaction to the back stack
+        transaction.replace(R.id.container, mapsFragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
     }
 }

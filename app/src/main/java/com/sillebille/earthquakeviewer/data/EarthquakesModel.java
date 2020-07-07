@@ -1,5 +1,8 @@
 package com.sillebille.earthquakeviewer.data;
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
@@ -28,7 +31,7 @@ public final class EarthquakesModel extends ViewModel implements Serializable {
         return "Null value";
     }
 
-    public static final class EarthQuake implements Serializable {
+    public static final class EarthQuake implements Serializable, Parcelable {
         @SerializedName("datetime")
         public final String dateTime;
         @SerializedName("depth")
@@ -52,6 +55,40 @@ public final class EarthquakesModel extends ViewModel implements Serializable {
             this.equivalentId = equivalentId;
             this.magnitude = magnitude;
             this.latitude = latitude;
+        }
+
+        protected EarthQuake(Parcel in) {
+            dateTime = in.readString();
+            depth = in.readDouble();
+            longitude = in.readDouble();
+            source = in.readString();
+            equivalentId = in.readString();
+            magnitude = in.readDouble();
+            latitude = in.readDouble();
+        }
+
+        public static final Creator<EarthQuake> CREATOR = new Creator<EarthQuake>() {
+            @Override
+            public EarthQuake createFromParcel(Parcel in) {
+                return new EarthQuake(in);
+            }
+
+            @Override
+            public EarthQuake[] newArray(int size) {
+                return new EarthQuake[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+            Bundle b = new Bundle();
+            b.putParcelable("data", this);
+            parcel.writeBundle(b);
         }
     }
 }
