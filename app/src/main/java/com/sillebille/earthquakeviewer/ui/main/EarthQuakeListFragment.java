@@ -125,6 +125,7 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
                 mEarthQuakeDataList.addAll(mViewModel.earthQuakes);
             }
         }
+        getActivity().setTitle(getString(R.string.app_name));
     }
 
     /*

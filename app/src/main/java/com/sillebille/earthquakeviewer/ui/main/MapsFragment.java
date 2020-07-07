@@ -60,6 +60,7 @@ public class MapsFragment extends Fragment {
             mLatitude = selectedItem.latitude;
             mLongitude = selectedItem.longitude;
             Log.d(TAG_NAME, "Latitude: " +mLatitude + " Longitude: " + mLongitude);
+            getActivity().setTitle(selectedItem.equivalentId);
         }
         return inflater.inflate(R.layout.fragment_maps, container, false);
     }
