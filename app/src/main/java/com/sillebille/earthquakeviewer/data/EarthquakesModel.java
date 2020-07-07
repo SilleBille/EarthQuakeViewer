@@ -3,17 +3,18 @@ package com.sillebille.earthquakeviewer.data;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 
+/*
+POJO class to map values from JSON request using GSON library. This class also extend ViewModel
+to preserve values from destroying when orientation changes
+ */
 public final class EarthquakesModel extends ViewModel implements Serializable {
     @SerializedName("earthquakes")
     public List<EarthQuake> earthQuakes;
@@ -33,16 +34,6 @@ public final class EarthquakesModel extends ViewModel implements Serializable {
         public final double magnitude;
         @SerializedName("lat")
         public final double latitude;
-
-        public EarthQuake(String dateTime, long depth, double longitude, String source, String equivalentId, double magnitude, double latitude){
-            this.dateTime = dateTime;
-            this.depth = depth;
-            this.longitude = longitude;
-            this.source = source;
-            this.equivalentId = equivalentId;
-            this.magnitude = magnitude;
-            this.latitude = latitude;
-        }
 
         protected EarthQuake(Parcel in) {
             dateTime = in.readString();
@@ -73,9 +64,14 @@ public final class EarthquakesModel extends ViewModel implements Serializable {
 
         @Override
         public void writeToParcel(Parcel parcel, int i) {
-            Bundle b = new Bundle();
-            b.putParcelable("data", this);
-            parcel.writeBundle(b);
+            // Define how the data needs to be parceled
+            parcel.writeString(dateTime);
+            parcel.writeDouble(depth);
+            parcel.writeDouble(longitude);
+            parcel.writeString(source);
+            parcel.writeString(equivalentId);
+            parcel.writeDouble(magnitude);
+            parcel.writeDouble(latitude);
         }
     }
 }

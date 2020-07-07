@@ -15,7 +15,6 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class EarthQuakeListAdapter extends RecyclerView.Adapter<EarthQuakeListAdapter.CustomRecyclerView> {
-    private final String TAG_NAME = EarthQuakeListAdapter.class.getName();
     private List<EarthquakesModel.EarthQuake> itemList;
     private Context mContext;
     private OnEarthQuakeClickListener mListener;
@@ -40,6 +39,7 @@ public class EarthQuakeListAdapter extends RecyclerView.Adapter<EarthQuakeListAd
         holder.txtMagnitue.setText(String.valueOf(myData.magnitude));
         holder.txtDateTime.setText(myData.dateTime);
 
+        // distinguish entries that have magnitude more than or equal to 8
         if (myData.magnitude >= 8) {
             holder.layoutItem.setBackgroundColor(mContext.getColor(R.color.warning));
         }
@@ -55,18 +55,12 @@ public class EarthQuakeListAdapter extends RecyclerView.Adapter<EarthQuakeListAd
         notifyDataSetChanged();
     }
 
-    public void addAll(List<EarthquakesModel.EarthQuake> list) {
-        itemList.addAll(list);
-        notifyDataSetChanged();
-    }
-    // Clean all elements of the recycler
-
+    /*
+    interface to be implemented by Fragment/Activity to select an item from recycler view on click
+     */
     public interface OnEarthQuakeClickListener {
         void onItemClick(int position);
     }
-
-
-// Add a list of items -- change to type used
 
     public static class CustomRecyclerView extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtEqid;

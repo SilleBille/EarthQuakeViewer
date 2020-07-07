@@ -5,6 +5,9 @@ import android.content.Context;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+/*
+Singleton class to instantiate Volley request queue
+ */
 public class FetchResultQueue {
     private static FetchResultQueue mInstance;
     private Context mContext;

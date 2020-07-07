@@ -1,9 +1,5 @@
 package com.sillebille.earthquakeviewer.ui.main;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +14,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sillebille.earthquakeviewer.R;
 import com.sillebille.earthquakeviewer.data.EarthquakesModel;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 public class MapsFragment extends Fragment {
     private final String TAG_NAME = MapsFragment.class.getName();
@@ -50,16 +50,16 @@ public class MapsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        Bundle bundle=getArguments();
+        // Get the values that was parceled
+        Bundle bundle = getArguments();
         EarthquakesModel.EarthQuake selectedItem;
 
-        //here is your list array
-        if(bundle != null) {
+        if (bundle != null) {
             selectedItem = bundle.getParcelable("selected_item");
             assert selectedItem != null;
             mLatitude = selectedItem.latitude;
             mLongitude = selectedItem.longitude;
-            Log.d(TAG_NAME, "Latitude: " +mLatitude + " Longitude: " + mLongitude);
+            Log.d(TAG_NAME, "Latitude: " + mLatitude + " Longitude: " + mLongitude);
             getActivity().setTitle(selectedItem.equivalentId);
         }
         return inflater.inflate(R.layout.fragment_maps, container, false);

@@ -72,20 +72,21 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
 
         RecyclerView recyclerView = rootView.findViewById(R.id.earthQuakeRecyclerView);
         // Lookup the swipe container view
-        mSwipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.main);
+        mSwipeContainer = rootView.findViewById(R.id.main);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        // Set the adapter to fill our recycler view
         mAdapter = new EarthQuakeListAdapter(getActivity(), mEarthQuakeDataList, this);
         recyclerView.setAdapter(mAdapter);
 
-        // Setup refresh listener which triggers new data loading
+        // Setup refresh listener to allow users to refresh data manually
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.d(TAG_NAME, "Refreshing. URL: " + mEarthQuakeListUrl);
+                Log.d(TAG_NAME, "Refreshing.... URL: " + mEarthQuakeListUrl);
                 mAdapter.clear();
                 getEarthQuakeList(mEarthQuakeListUrl);
             }
@@ -117,6 +118,8 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
                 .build();
         mEarthQuakeListUrl = earthQuakeListUri.toString();
         Log.d(TAG_NAME, "Built URL: " + mEarthQuakeListUrl);
+
+        // Hit the API end point IFF the data is not available
         if (mViewModel.earthQuakes == null || mViewModel.earthQuakes.isEmpty()) {
             getEarthQuakeList(mEarthQuakeListUrl);
         } else {
@@ -144,7 +147,8 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
             public void onResponse(JSONObject response) {
                 VolleyLog.wtf(response.toString(), "utf-8");
 
-                // Map gson to existing EarthquakesModel instance
+                // Map gson to existing EarthquakesModel instance, to store the data inside ViewModel.
+                // That is, storing inside ViewModel lets us reuse the data if device orientation changes
                 // Workaround: https://github.com/google/gson/issues/431
                 Gson gson = new GsonBuilder().registerTypeAdapter(EarthquakesModel.class, creator).create();
                 EarthquakesModel eModel = gson.fromJson(response.toString(), EarthquakesModel.class);
@@ -178,7 +182,7 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
         // selected item
         EarthquakesModel.EarthQuake selectedItem = mEarthQuakeDataList.get(position);
 
-        // Create the MapsFragment and parcel the selected item in a bundle
+        // Create the MapsFragment and parcel the selected item into a bundle
         Fragment mapsFragment = new MapsFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable("selected_item", selectedItem);
