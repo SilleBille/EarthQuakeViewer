@@ -18,19 +18,6 @@ public final class EarthquakesModel extends ViewModel implements Serializable {
     @SerializedName("earthquakes")
     public List<EarthQuake> earthQuakes;
 
-    @NonNull
-    public String toString() {
-        String returnValue = "";
-        if(earthQuakes != null) {
-            for (EarthQuake e : earthQuakes) {
-                Log.d("EARTHQUAKESMODEL: ", e.equivalentId);
-                returnValue += e.equivalentId + "   ";
-            }
-            return returnValue;
-        }
-        return "Null value";
-    }
-
     public static final class EarthQuake implements Serializable, Parcelable {
         @SerializedName("datetime")
         public final String dateTime;

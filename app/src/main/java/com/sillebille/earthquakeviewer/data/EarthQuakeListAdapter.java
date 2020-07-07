@@ -1,21 +1,17 @@
 package com.sillebille.earthquakeviewer.data;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.sillebille.earthquakeviewer.MainActivity;
 import com.sillebille.earthquakeviewer.R;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class EarthQuakeListAdapter extends RecyclerView.Adapter<EarthQuakeListAdapter.CustomRecyclerView> {
@@ -54,9 +50,23 @@ public class EarthQuakeListAdapter extends RecyclerView.Adapter<EarthQuakeListAd
         return this.itemList.size();
     }
 
+    public void clear() {
+        itemList.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addAll(List<EarthquakesModel.EarthQuake> list) {
+        itemList.addAll(list);
+        notifyDataSetChanged();
+    }
+    // Clean all elements of the recycler
+
     public interface OnEarthQuakeClickListener {
         void onItemClick(int position);
     }
+
+
+// Add a list of items -- change to type used
 
     public static class CustomRecyclerView extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtEqid;

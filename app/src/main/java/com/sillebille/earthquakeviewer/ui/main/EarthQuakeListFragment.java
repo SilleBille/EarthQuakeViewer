@@ -35,6 +35,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAdapter.OnEarthQuakeClickListener {
 
@@ -55,6 +56,8 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
     private ArrayList<EarthquakesModel.EarthQuake> mEarthQuakeDataList = new ArrayList<>();
     private EarthQuakeListAdapter mAdapter;
     private EarthquakesModel mViewModel;
+    private SwipeRefreshLayout mSwipeContainer;
+    String mEarthQuakeListUrl;
 
     public static EarthQuakeListFragment newInstance() {
         return new EarthQuakeListFragment();
@@ -68,6 +71,8 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
 
 
         RecyclerView recyclerView = rootView.findViewById(R.id.earthQuakeRecyclerView);
+        // Lookup the swipe container view
+        mSwipeContainer = (SwipeRefreshLayout) rootView.findViewById(R.id.main);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -75,6 +80,22 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
 
         mAdapter = new EarthQuakeListAdapter(getActivity(), mEarthQuakeDataList, this);
         recyclerView.setAdapter(mAdapter);
+
+        // Setup refresh listener which triggers new data loading
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.d(TAG_NAME, "Refreshing. URL: " + mEarthQuakeListUrl);
+                mAdapter.clear();
+                getEarthQuakeList(mEarthQuakeListUrl);
+            }
+        });
+
+        // Configure the refreshing colors
+        mSwipeContainer.setColorSchemeResources(
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_blue_light);
 
         return rootView;
     }
@@ -94,13 +115,13 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
                 .appendQueryParameter("west", String.valueOf(WEST))
                 .appendQueryParameter("username", USER)
                 .build();
-        String earthQuakeListUrl = earthQuakeListUri.toString();
-        Log.d(TAG_NAME, "Built URL: " + earthQuakeListUrl);
+        mEarthQuakeListUrl = earthQuakeListUri.toString();
+        Log.d(TAG_NAME, "Built URL: " + mEarthQuakeListUrl);
         if (mViewModel.earthQuakes == null || mViewModel.earthQuakes.isEmpty()) {
-            getEarthQuakeList(earthQuakeListUrl);
+            getEarthQuakeList(mEarthQuakeListUrl);
         } else {
             // If orientation changes, re-add the data from view model ONLY IF the list is empty
-            if(mEarthQuakeDataList.isEmpty()) {
+            if (mEarthQuakeDataList.isEmpty()) {
                 mEarthQuakeDataList.addAll(mViewModel.earthQuakes);
             }
         }
@@ -130,11 +151,13 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
                 // Add all the retrieved earthquake data to our List to be shown on recyclerview
                 mEarthQuakeDataList.addAll(eModel.earthQuakes);
                 mAdapter.notifyDataSetChanged();
+                mSwipeContainer.setRefreshing(false);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG_NAME, "Error response: " + error.toString());
+                mSwipeContainer.setRefreshing(false);
                 if (error instanceof NetworkError) {
                     Toast.makeText(getActivity(), getString(R.string.network_unavailable), Toast.LENGTH_LONG).show();
                 } else {
