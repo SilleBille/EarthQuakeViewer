@@ -1,7 +1,9 @@
 package com.sillebille.earthquakeviewer.ui.main;
 
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,6 +91,14 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
                 Log.d(TAG_NAME, "Refreshing.... URL: " + mEarthQuakeListUrl);
                 mAdapter.clear();
                 getEarthQuakeList(mEarthQuakeListUrl);
+
+                // Timeout for hiding the pull-to-refresh animation
+                new Handler().postDelayed(new Runnable() {
+                    @Override public void run() {
+                        // Stop animation (This will be after 5 seconds)
+                        mSwipeContainer.setRefreshing(false);
+                    }
+                }, 5000); // Delay in millis
             }
         });
 
@@ -170,7 +180,6 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
                 }
             }
         });
-
         // Add the generated jsonObjectReqeust to the Volley queue
         queue.add(jsonObjectRequest);
     }
@@ -196,5 +205,16 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
 
         // Commit the transaction
         transaction.commit();
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Hack: When configuration changes, the swipe refresh does not stop loading.
+        // Set refreshing to false forcefully
+        if(newConfig.getLayoutDirection() == Configuration.ORIENTATION_LANDSCAPE){
+            if(mSwipeContainer.isRefreshing())
+                mSwipeContainer.setRefreshing(false);
+        }
     }
 }
