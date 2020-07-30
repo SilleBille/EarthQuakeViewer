@@ -106,9 +106,10 @@ public class EarthQuakeListFragment extends Fragment implements
 
         // Configure the refreshing colors
         mSwipeContainer.setColorSchemeResources(
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_blue_light);
+                R.color.spinnerColor1,
+                R.color.spinnerColor2,
+                R.color.spinnerColor3
+        );
 
         return rootView;
     }
