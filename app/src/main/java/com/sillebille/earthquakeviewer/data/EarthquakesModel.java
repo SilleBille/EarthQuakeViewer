@@ -11,9 +11,10 @@ import java.util.List;
 
 import androidx.lifecycle.ViewModel;
 
-/*
-POJO class to map values from JSON request using GSON library. This class also extend ViewModel
-to preserve values from destroying when orientation changes
+
+/**
+ * POJO class to map values from JSON request using GSON library. This class also extend ViewModel
+ * to preserve values from destroying when orientation changes
  */
 public final class EarthquakesModel extends ViewModel implements Serializable {
     @SerializedName("earthquakes")

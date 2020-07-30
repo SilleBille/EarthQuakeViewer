@@ -14,12 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class EarthQuakeListAdapter extends RecyclerView.Adapter<EarthQuakeListAdapter.CustomRecyclerView> {
+public class EarthQuakeListAdapter extends
+        RecyclerView.Adapter<EarthQuakeListAdapter.CustomRecyclerView> {
     private List<EarthquakesModel.EarthQuake> itemList;
     private Context mContext;
     private OnEarthQuakeClickListener mListener;
 
-    public EarthQuakeListAdapter(Context context, List<EarthquakesModel.EarthQuake> itemList, OnEarthQuakeClickListener listener) {
+    public EarthQuakeListAdapter(Context context, List<EarthquakesModel.EarthQuake> itemList,
+                                 OnEarthQuakeClickListener listener) {
         this.itemList = itemList;
         this.mContext = context;
         this.mListener = listener;
@@ -28,7 +30,8 @@ public class EarthQuakeListAdapter extends RecyclerView.Adapter<EarthQuakeListAd
     @NonNull
     @Override
     public CustomRecyclerView onCreateViewHolder(ViewGroup parent, int viewType) {
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, parent, false);
+        View layoutView = LayoutInflater.from(parent.getContext()).inflate(
+                R.layout.recyclerview_item, parent, false);
         return new CustomRecyclerView(layoutView, mListener);
     }
 
@@ -55,14 +58,16 @@ public class EarthQuakeListAdapter extends RecyclerView.Adapter<EarthQuakeListAd
         notifyDataSetChanged();
     }
 
-    /*
-    interface to be implemented by Fragment/Activity to select an item from recycler view on click
+    /**
+     * Interface that needs to be implemented by Fragment/Activity
+     * to select an item from recycler view on click
      */
     public interface OnEarthQuakeClickListener {
         void onItemClick(int position);
     }
 
-    public static class CustomRecyclerView extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class CustomRecyclerView extends RecyclerView.ViewHolder implements
+            View.OnClickListener {
         TextView txtEqid;
         TextView txtMagnitue;
         TextView txtDateTime;

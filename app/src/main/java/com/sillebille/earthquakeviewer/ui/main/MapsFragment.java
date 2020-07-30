@@ -15,6 +15,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.sillebille.earthquakeviewer.R;
 import com.sillebille.earthquakeviewer.data.EarthquakesModel;
 
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -60,7 +62,7 @@ public class MapsFragment extends Fragment {
             mLatitude = selectedItem.latitude;
             mLongitude = selectedItem.longitude;
             Log.d(TAG_NAME, "Latitude: " + mLatitude + " Longitude: " + mLongitude);
-            getActivity().setTitle(selectedItem.equivalentId);
+            Objects.requireNonNull(getActivity()).setTitle(selectedItem.equivalentId);
         }
         return inflater.inflate(R.layout.fragment_maps, container, false);
     }

@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,7 +40,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAdapter.OnEarthQuakeClickListener {
+public class EarthQuakeListFragment extends Fragment implements
+        EarthQuakeListAdapter.OnEarthQuakeClickListener {
 
     final String TAG_NAME = EarthQuakeListFragment.class.getName();
     // Our API end point to get Earth Quake list in JSON format
@@ -138,7 +140,7 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
                 mEarthQuakeDataList.addAll(mViewModel.earthQuakes);
             }
         }
-        getActivity().setTitle(getString(R.string.app_name));
+        Objects.requireNonNull(getActivity()).setTitle(getString(R.string.app_name));
     }
 
     /*
@@ -152,7 +154,8 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
         };
         VolleyLog.DEBUG = true;
         RequestQueue queue = FetchResultQueue.getInstance(getActivity()).getRequestQueue();
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
+                new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 VolleyLog.wtf(response.toString(), "utf-8");
@@ -160,8 +163,10 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
                 // Map gson to existing EarthquakesModel instance, to store the data inside ViewModel.
                 // That is, storing inside ViewModel lets us reuse the data if device orientation changes
                 // Workaround: https://github.com/google/gson/issues/431
-                Gson gson = new GsonBuilder().registerTypeAdapter(EarthquakesModel.class, creator).create();
-                EarthquakesModel eModel = gson.fromJson(response.toString(), EarthquakesModel.class);
+                Gson gson = new GsonBuilder().registerTypeAdapter(EarthquakesModel.class, creator)
+                        .create();
+                EarthquakesModel eModel = gson.fromJson(response.toString(),
+                        EarthquakesModel.class);
 
                 // Add all the retrieved earthquake data to our List to be shown on recyclerview
                 mEarthQuakeDataList.addAll(eModel.earthQuakes);
@@ -174,7 +179,8 @@ public class EarthQuakeListFragment extends Fragment implements EarthQuakeListAd
                 Log.d(TAG_NAME, "Error response: " + error.toString());
                 mSwipeContainer.setRefreshing(false);
                 if (error instanceof NetworkError) {
-                    Toast.makeText(getActivity(), getString(R.string.network_unavailable), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.network_unavailable),
+                            Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
                 }
