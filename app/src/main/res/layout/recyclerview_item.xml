@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|start"
-            android:text="eqid"
+            android:text="@string/txt_eqid"
             android:textSize="30sp" />
 
         <TextView
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_eqid"
             android:layout_gravity="bottom|start"
-            android:text="Magnitude"
+            android:text="@string/txt_magnitude"
             android:textStyle="bold" />
 
         <TextView
@@ -36,6 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/txt_eqid"
             android:layout_alignParentEnd="true"
-            android:text="Date Time" />
+            android:layout_below="@+id/txt_eqid"
+            android:text="@string/txt_date_time" />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
